@@ -29,8 +29,5 @@ Não há dependências nem etapa de build: é um único arquivo HTML.
 
 Estimativa não oficial. Confira sempre o Guia de Provas em [fuvest.br](https://www.fuvest.br).
 
-* Site inspirado totalmente no site (original) do Professor Roger 
-YouTube | @filososilva
 
-Se precisar de algo, @belafaz_fono
 
