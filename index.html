@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notas 2ª Fase - FUVEST 2027 - Estimativa</title>
+<style>
+  :root{
+    --bg:#f5f6fa; --card:#ffffff; --text:#1c2230; --muted:#5d667a; --border:#d9dde8;
+    --accent:#1f5fbf; --accent-soft:#e6efff; --ok:#17803d; --warn:#b45309; --bad:#b91c1c;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#12151c; --card:#1b202b; --text:#eef0f6; --muted:#9aa3b8; --border:#2e3545;
+      --accent:#6aa3ff; --accent-soft:#1d2a44; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+  main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+  h1{font-size:1.5rem;margin:8px 0 2px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:.95rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px}
+  .card h2{font-size:1rem;margin:0 0 4px}
+  .hint{color:var(--muted);font-size:.85rem;margin:0 0 10px}
+  label{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
+  input[type=text]{width:100%;font-size:1.1rem;padding:11px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+  input[type=text]:focus{outline:2px solid var(--accent);border-color:transparent}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .check{display:flex;gap:10px;align-items:flex-start;font-weight:500;margin-top:6px;cursor:pointer}
+  .check input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent)}
+  .derived{font-size:.88rem;color:var(--muted);margin-top:6px;min-height:1.2em}
+  .result{background:var(--accent-soft);border-color:var(--accent);text-align:center}
+  .big{font-size:2rem;font-weight:800;margin:4px 0;color:var(--accent)}
+  .result p{margin:4px 0}
+  .msg-ok{color:var(--ok);font-weight:600}
+  .msg-warn{color:var(--warn);font-weight:600}
+  .msg-bad{color:var(--bad);font-weight:600}
+  .small{font-size:.85rem;color:var(--muted)}
+  details{margin-top:6px}
+  summary{cursor:pointer;font-weight:600}
+  code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.88em}
+  a{color:var(--accent)}
+  footer{color:var(--muted);font-size:.8rem;margin-top:18px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <h1>NOTAS - FUVEST 2027</h1>
+  <p class="sub">2ª fase: 1º dia [100 pts] + 2º dia [100 pts]. Descubra quanto você precisa na 2ª fase.</p>
+
+  <section class="card">
+    <h2>1ª FASE</h2>
+    <p class="hint">Coloque o NÚMERO DE ACERTOS (de 0 a 80). Mínimo para a 2ª fase: 24 acertos (30%).</p>
+    <label for="acertos">Acertos na 1ª fase</label>
+    <input id="acertos" type="text" inputmode="numeric" autocomplete="off" placeholder="ex.: 62">
+    <div class="derived" id="f1info"></div>
+  </section>
+
+  <section class="card">
+    <h2>PONTOS FINAIS desejados</h2>
+    <p class="hint">Nota de corte da carreira (escala de 0 a 1000). Veja a nota mínima de anos anteriores:
+      <a href="https://www.fuvest.br/wp-content/uploads/fuvest2026-chamada-1-notas-minimas.pdf" target="_blank" rel="noopener">PDF 2026 (1ª chamada)</a> ·
+      <a href="https://www.fuvest.br/wp-content/uploads/fuvest2025_notas_minimas_classificacao_aprovado_chamada_1.pdf" target="_blank" rel="noopener">PDF 2025</a>
+    </p>
+    <label for="alvo">Pontos finais na carreira</label>
+    <input id="alvo" type="text" inputmode="decimal" autocomplete="off" placeholder="ex.: 650,51">
+
+    <label class="check"><input type="checkbox" id="temCE"> <span>Minha carreira tem prova de Competências Específicas (Artes Cênicas, Artes Visuais ou Música)</span></label>
+    <div id="ceBox" hidden>
+      <label for="ce">Nota em Competências Específicas (0 a 100)</label>
+      <input id="ce" type="text" inputmode="decimal" autocomplete="off" placeholder="ex.: 70">
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Já sabe a nota de um dia? (opcional)</h2>
+    <p class="hint">Preencha um dos dias para ver quanto falta no outro.</p>
+    <div class="row">
+      <div>
+        <label for="d1">Nota 1º dia (0 a 100)</label>
+        <input id="d1" type="text" inputmode="decimal" autocomplete="off" placeholder="Português + Redação">
+      </div>
+      <div>
+        <label for="d2">Nota 2º dia (0 a 100)</label>
+        <input id="d2" type="text" inputmode="decimal" autocomplete="off" placeholder="Disciplinas da carreira">
+      </div>
+    </div>
+  </section>
+
+  <section class="card result" id="resultado" aria-live="polite">
+    <p class="small">Preencha os campos acima.</p>
+  </section>
+
+  <details class="card">
+    <summary>Como o cálculo é feito</summary>
+    <p class="small">Segundo o Guia de Provas FUVEST 2027, as notas são normalizadas na base 100 e a nota final é convertida para a escala de 1000 pontos:</p>
+    <p class="small"><b>Sem Competências Específicas:</b> <code>NF = (F1 + D1 + D2) / 3</code><br>
+    <b>Com Competências Específicas:</b> <code>NF = (F1 + D1 + D2 + 2 × CE) / 5</code><br>
+    <b>Pontos finais</b> = <code>NF × 10</code>, e <code>F1 = acertos / 80 × 100</code>.</p>
+    <p class="small">Logo, a soma necessária na 2ª fase é <code>D1 + D2 = 3 × PF / 10 − F1</code> (sem CE) ou <code>D1 + D2 = PF / 2 − F1 − 2 × CE</code> (com CE).</p>
+    <p class="small"><b>Eliminações:</b> menos de 24 acertos na 1ª fase; nota 0 na redação ou em qualquer dia da 2ª fase; menos de 50% na prova de Competências Específicas.</p>
+  </details>
+
+  <footer>
+    Estimativa não oficial, baseada no Guia de Provas FUVEST 2027. A nota de corte muda a cada ano e a prova da 1ª fase passou de 90 para 80 questões, então use as notas de anos anteriores apenas como referência.
+  </footer>
+</main>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var TOTAL_Q = 80, MIN_ACERTOS = 24;
+
+  function parse(v){
+    if (v == null) return null;
+    v = String(v).trim().replace(/\s/g,'');
+    if (v === '') return null;
+    // aceita 1.234,56 e 1234.56
+    if (v.indexOf(',') > -1) v = v.replace(/\./g,'').replace(',','.');
+    var n = Number(v);
+    return isFinite(n) ? n : NaN;
+  }
+  function fmt(n, d){
+    return n.toLocaleString('pt-BR', {minimumFractionDigits: d, maximumFractionDigits: d});
+  }
+  function clamp01(n){ return Math.max(0, n); }
+
+  function calc(){
+    var out = $('resultado');
+    var acertos = parse($('acertos').value);
+    var alvo = parse($('alvo').value);
+    var temCE = $('temCE').checked;
+    var ce = parse($('ce').value);
+    var d1 = parse($('d1').value);
+    var d2 = parse($('d2').value);
+    $('ceBox').hidden = !temCE;
+
+    var f1info = $('f1info');
+    f1info.textContent = '';
+
+    if (acertos === null || isNaN(acertos)) { out.innerHTML = '<p class="small">Informe seus acertos na 1ª fase.</p>'; return; }
+    if (acertos < 0 || acertos > TOTAL_Q || Math.floor(acertos) !== acertos) {
+      out.innerHTML = '<p class="msg-bad">Os acertos devem ser um número inteiro entre 0 e ' + TOTAL_Q + '.</p>'; return;
+    }
+    var f1 = acertos / TOTAL_Q * 100;
+    f1info.textContent = 'Nota da 1ª fase na base 100: ' + fmt(f1, 2) + ' (= ' + fmt(f1 * 10 / 3, 2) + ' pts finais se a média de D1 e D2 fosse igual à 1ª fase)';
+    f1info.textContent = 'Nota da 1ª fase na base 100: ' + fmt(f1, 2);
+
+    if (acertos < MIN_ACERTOS) {
+      out.innerHTML = '<p class="msg-bad">Com ' + acertos + ' acertos você não chega ao mínimo de ' + MIN_ACERTOS + ' (30%) e é eliminado(a) da 2ª fase.</p>'; return;
+    }
+    if (alvo === null || isNaN(alvo)) { out.innerHTML = '<p class="small">Informe os pontos finais desejados (escala de 0 a 1000).</p>'; return; }
+    if (alvo < 0 || alvo > 1000) { out.innerHTML = '<p class="msg-bad">Os pontos finais devem estar entre 0 e 1000.</p>'; return; }
+
+    var needed; // soma D1 + D2 necessária
+    var ceTxt = '';
+    if (temCE) {
+      if (ce === null || isNaN(ce)) { out.innerHTML = '<p class="small">Informe sua nota em Competências Específicas (0 a 100).</p>'; return; }
+      if (ce < 0 || ce > 100) { out.innerHTML = '<p class="msg-bad">A nota de Competências Específicas deve estar entre 0 e 100.</p>'; return; }
+      if (ce < 50) { out.innerHTML = '<p class="msg-bad">Com menos de 50% em Competências Específicas você é eliminado(a).</p>'; return; }
+      needed = alvo / 2 - f1 - 2 * ce;
+      ceTxt = ' (com CE = ' + fmt(ce, 2) + ')';
+    } else {
+      needed = alvo * 3 / 10 - f1;
+    }
+
+    var html = '';
+    if (needed > 200) {
+      html += '<p class="msg-bad">Com ' + acertos + ' acertos' + ceTxt + ', mesmo tirando 200/200 na 2ª fase você chegaria a no máximo ' +
+        fmt(maxPoints(f1, temCE, ce), 2) + ' pontos finais.</p>';
+      out.innerHTML = html; return;
+    }
+    if (needed <= 0) {
+      html += '<p class="msg-ok">Você já alcança ' + fmt(alvo, 2) + ' pontos só com a 1ª fase' + ceTxt + '.</p>' +
+        '<p class="small">Atenção: tirar 0 na redação ou em qualquer dia da 2ª fase elimina. Precisa de pelo menos 1 ponto em cada dia.</p>';
+      out.innerHTML = html; return;
+    }
+
+    html += '<p>Eu preciso de</p><div class="big">' + fmt(needed, 2) + '/200</div><p>na segunda fase' + ceTxt + '</p>' +
+      '<p class="small">Isso é ' + fmt(needed / 2, 2) + ' de média por dia (' + fmt(needed / 2, 1) + '%).</p>';
+
+    var hasD1 = d1 !== null && !isNaN(d1), hasD2 = d2 !== null && !isNaN(d2);
+    if ((hasD1 && (d1 < 0 || d1 > 100)) || (hasD2 && (d2 < 0 || d2 > 100))) {
+      html += '<p class="msg-bad">As notas de cada dia devem estar entre 0 e 100.</p>';
+    } else if (hasD1 && hasD2) {
+      var total = d1 + d2, pf = finalPoints(f1, d1, d2, temCE, ce);
+      html += '<hr style="border:none;border-top:1px solid var(--border);margin:12px 0">' +
+        '<p>Com D1 = ' + fmt(d1, 2) + ' e D2 = ' + fmt(d2, 2) + ', seus pontos finais seriam <b>' + fmt(pf, 2) + '</b>.</p>' +
+        (pf >= alvo ? '<p class="msg-ok">Meta atingida.</p>' : '<p class="msg-warn">Faltam ' + fmt(alvo - pf, 2) + ' pontos para a meta.</p>');
+    } else if (hasD1) {
+      html += dayNeed('2º dia', needed - d1);
+    } else if (hasD2) {
+      html += dayNeed('1º dia', needed - d2);
+    }
+    out.innerHTML = html;
+  }
+
+  function dayNeed(label, v){
+    var h = '<hr style="border:none;border-top:1px solid var(--border);margin:12px 0">';
+    if (v > 100) return h + '<p class="msg-bad">Seria preciso mais de 100 no ' + label + ', então a meta não é alcançável com essa nota.</p>';
+    if (v <= 0) return h + '<p class="msg-ok">Você já bateu a meta. Basta não zerar o ' + label + '.</p>';
+    return h + '<p>Você precisa de <b>' + fmt(v, 2) + '/100</b> no ' + label + '.</p>';
+  }
+  function finalPoints(f1, d1, d2, temCE, ce){
+    return temCE ? (f1 + d1 + d2 + 2 * ce) / 5 * 10 : (f1 + d1 + d2) / 3 * 10;
+  }
+  function maxPoints(f1, temCE, ce){ return finalPoints(f1, 100, 100, temCE, ce); }
+
+  ['acertos','alvo','ce','d1','d2'].forEach(function(id){ $(id).addEventListener('input', calc); });
+  $('temCE').addEventListener('change', calc);
+  calc();
+})();
+</script>
+</body>
+</html>
